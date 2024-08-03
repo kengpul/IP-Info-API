@@ -4,7 +4,6 @@ import APIClient from "../api-client";
 import ipInfo from "../models/ipInfo";
 import IpInfo from "../types/IpInfo";
 import { RequestAuth } from "../types/user";
-import ExpressError from "../utils/ExpressError";
 
 export const getInitialIP = async (
     req: Request,
@@ -22,16 +21,20 @@ export const getIp = async (
     next: NextFunction
 ) => {
     const { ip } = req.query;
-    if (!ip) return next(new ExpressError("IP cannot be blank", 404));
+    if (!ip) return res.status(400).json({error: "IP cannot be blank"});
     const apiClient = new APIClient<IpInfo>("")
     const result = await apiClient.getIp(ip as string);
 
     if (result instanceof AxiosError) {
-        return next(new ExpressError("Wrong IP, please input a valid IP", 404))
+        return res.status(400).json({error: "Wrong IP, please input a valid IP"})
     }
 
-    const newIpInfo = new ipInfo({ ...result, user: req.user._id })
-    newIpInfo.save();
+    const existIpInfo = await ipInfo.findOne({ip: result.ip})
+    if(!existIpInfo) {
+        const newIpInfo = new ipInfo({ ...result, user: req.user._id })
+        newIpInfo.save();
+    }
+
     res.json({ result })
 }
 
@@ -48,7 +51,7 @@ export const getHistory = async (
     req: RequestAuth,
     res: Response
 ) => {
-    const ipList = await ipInfo.find({ user: req.user._id });
+    const ipList = (await ipInfo.find({ user: req.user._id })).reverse();
 
     res.json({ result: ipList })
 }

@@ -17,7 +17,7 @@ export const requireAuth = async (
     const token = authorization.split(" ")[1];
     const {userId} = jwt.verify(
         token,
-        "Secret" as string
+        process.env.SECRET as string
     ) as JwtPayload;
     req.user = (await User.findOne({ _id: userId })) as IUser;
 

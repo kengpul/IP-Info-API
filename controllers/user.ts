@@ -24,7 +24,7 @@ export const signup = async (
 
     user.save();
 
-    const token = jwt.sign({ userID }, "Secret" as string, {
+    const token = jwt.sign({ userID }, process.env.SECRET as string, {
         expiresIn: "3d",
     });
 
@@ -39,16 +39,16 @@ export const login = async (
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user) return next(new ExpressError("Email does not exist", 404));
+    if (!user) return res.status(404).send("Email does not exist");
 
     if (password && user.password) {
         const match = await bcrypt.compare(password, user.password)
-        if (!match) return next(new ExpressError("Wrong Password", 404));
+        if (!match) return res.status(404).send("Wrong Password ");
     }
 
     const userId = user._id
 
-    const token = jwt.sign({ userId }, "Secret" as string, {
+    const token = jwt.sign({ userId }, process.env.SECRET as string, {
         expiresIn: "3d",
     });
 

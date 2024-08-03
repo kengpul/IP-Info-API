@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const app: Express = express();
 import userRoute from "./routes/user"
 import ipRoute from "./routes/ipInfo"
+import cors from "cors";
 
 const dbUrl = process.env.MONGO_URI || "mongodb://localhost:27017/ipinfo";
 mongoose.set("strictQuery", false);
@@ -15,10 +16,7 @@ db.once("open", () => {
 });
 
 app.use(express.json());
-
-app.get("/", (req: Request, res: Response) => {
-    res.send("Hellos")
-})
+app.use(cors());
 
 app.use("/user", userRoute)
 app.use("/ip", ipRoute)

@@ -16,11 +16,19 @@ const User = mongoose.model("User", userSchema);
 const users = [
     new User({
         email: "test@test.com",
-        password: "$2b$10$W1sWCseEcFzDBfLkLIXBh.9DF2GHsEz8Be7fFA25KXO5mTPYMR7/."
+        password: "$2b$10$8wfm/NvUbfVMEoGPxVYHVOc/luN7.RM5ENdT/fnNMyUcJ0HYxI.U."
     }),
     new User({
         email: "test@test1.com",
-        password: "$2b$10$ieVNlzd/W41VXbVcwTyKgOP9DXHvwtguo8KQM020NHNL2XstAJBze"
+        password: "$2b$10$zvxd/cNGclurX.uJoB48JuBuIF5QbmEqh.3q7aH8gzlDJYDIA2RgG"
+    }),
+    new User({
+        email: "test@test2.com",
+        password: "$2b$10$LRllz0dmV41xOtDE/bzNgefV8GgrJbrHIoOeiQ8yTrMPX2jx9iAPy"
+    }),
+    new User({
+        email: "test@test2.com",
+        password: "$$2b$10$4SCepaxl7UCIoNhr2CHPAuAp.ZM2jvFR6/72/PkgZqE/lYxtihRPC"
     })
 ]
 
