@@ -19,6 +19,13 @@ class APIClient<T> {
             .then(res => res.data)
             .catch(err => err)
     }
+
+    getIp = (ip: string) => {
+        return axiosInstance
+            .get<IpInfo>(`${this.endpoint}/${ip}`)
+            .then(res => res.data)
+            .catch(err => err)
+    }
 }
 
 export default APIClient
