@@ -3,6 +3,7 @@ import APIClient from "../api-client";
 import ipInfo from "../models/ipInfo";
 import IpInfo from "../types/IpInfo";
 import ExpressError from "../utils/ExpressError";
+import { AxiosError } from "axios";
 
 export const getInitialIP = async (
     req: Request,
@@ -23,6 +24,10 @@ export const getIp = async (
     if (!ip) return next(new ExpressError("IP cannot be blank", 404));
     const apiClient = new APIClient<IpInfo>("")
     const result = await apiClient.getIp(ip as string);
+    
+    if(result instanceof AxiosError) {
+        return next(new ExpressError("Wrong IP, please input a valid IP", 404))
+    }
 
     const newIpInfo = new ipInfo(result)
     newIpInfo.save();
