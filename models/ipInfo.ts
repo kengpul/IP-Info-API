@@ -10,7 +10,8 @@ const ipInfoSchema = new mongoose.Schema({
     loc: String,
     org: String,
     postal: String,
-    timezone: String
+    timezone: String,
+    user: mongoose.Types.ObjectId
 })
 
 const ipInfo = mongoose.model<IpInfo>("IpInfo", ipInfoSchema)

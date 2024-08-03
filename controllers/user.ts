@@ -11,6 +11,7 @@ export const signup = async (
     next: NextFunction
 ) => {
     const { email, password } = req.body;
+    if (!email || !password) return next(new ExpressError("email and password field required", 404))
 
     const existEmail = await User.findOne({ email });
     if (existEmail) return next(new ExpressError("Email already in use", 400));
@@ -40,9 +41,10 @@ export const login = async (
 
     if (!user) return next(new ExpressError("Email does not exist", 404));
 
-    const match = await bcrypt.compare(password, user.password)
-
-    if (!match) return next(new ExpressError("Wrong Password", 404));
+    if (password && user.password) {
+        const match = await bcrypt.compare(password, user.password)
+        if (!match) return next(new ExpressError("Wrong Password", 404));
+    }
 
     const userId = user._id
 

@@ -1,9 +1,10 @@
+import { AxiosError } from "axios";
 import { NextFunction, Request, Response } from "express";
 import APIClient from "../api-client";
 import ipInfo from "../models/ipInfo";
 import IpInfo from "../types/IpInfo";
+import { RequestAuth } from "../types/user";
 import ExpressError from "../utils/ExpressError";
-import { AxiosError } from "axios";
 
 export const getInitialIP = async (
     req: Request,
@@ -16,7 +17,7 @@ export const getInitialIP = async (
 }
 
 export const getIp = async (
-    req: Request,
+    req: RequestAuth,
     res: Response,
     next: NextFunction
 ) => {
@@ -29,9 +30,8 @@ export const getIp = async (
         return next(new ExpressError("Wrong IP, please input a valid IP", 404))
     }
 
-    const newIpInfo = new ipInfo(result)
+    const newIpInfo = new ipInfo({ ...result, user: req.user._id })
     newIpInfo.save();
-
     res.json({ result })
 }
 
@@ -39,7 +39,16 @@ export const getOneIpInfo = async (
     req: Request,
     res: Response
 ) => {
-    const geIpInfo = await ipInfo.findOne({ ip: req.query.ip });
+    const geIpInfo = await ipInfo.findOne({ ip: req.params.ip });
 
     res.json({ result: geIpInfo })
+}
+
+export const getHistory = async (
+    req: RequestAuth,
+    res: Response
+) => {
+    const ipList = await ipInfo.find({ user: req.user._id });
+
+    res.json({ result: ipList })
 }
