@@ -1,4 +1,5 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -14,22 +15,30 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 
 const users = [
-    new User({
+    {
         email: "test@test.com",
-        password: "$2b$10$8wfm/NvUbfVMEoGPxVYHVOc/luN7.RM5ENdT/fnNMyUcJ0HYxI.U."
-    }),
-    new User({
-        email: "test@test1.com",
-        password: "$2b$10$zvxd/cNGclurX.uJoB48JuBuIF5QbmEqh.3q7aH8gzlDJYDIA2RgG"
-    }),
-    new User({
-        email: "test@test2.com",
-        password: "$2b$10$LRllz0dmV41xOtDE/bzNgefV8GgrJbrHIoOeiQ8yTrMPX2jx9iAPy"
-    }),
-    new User({
-        email: "test@test2.com",
-        password: "$$2b$10$4SCepaxl7UCIoNhr2CHPAuAp.ZM2jvFR6/72/PkgZqE/lYxtihRPC"
-    })
+        password: "test"
+    },
+    {
+        email: "test1@test.com",
+        password: "test1"
+    },
+    {
+        email: "test2@test.com",
+        password: "test2"
+    },
+    {
+        email: "test3@test.com",
+        password: "test3"
+    },
+    {
+        email: "test4@test.com",
+        password: "test4"
+    },
+    {
+        email: "test5@test.com",
+        password: "test5"
+    },
 ]
 
 const dbUrl = process.env.MONGO_URI || "mongodb://localhost:27017/ipinfo";
@@ -38,15 +47,24 @@ mongoose.connect(dbUrl);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
-    console.log("Connected to database...");
+    console.log("Connected to database");
 });
 
-users.map(async (user, index) => {
-    await user.save()
-        .then(() => {
-            if (index === users.length - 1) {
-                console.log("Done!");
-                mongoose.disconnect()
-            }
-        })
-})
+const creatUser = async () => {
+    console.log("Creating users...");
+    for(const user of users.values()){
+        const existEmail = await User.findOne({email: user.email});
+        if(existEmail) continue;
+        const salt = await bcrypt.genSalt();
+        const hash = await bcrypt.hash(user.password, salt);
+        const newUser = new User({ email: user.email, password: hash });
+
+        console.log("Creating user email: ", user.email);
+        await newUser.save();
+    }
+
+    mongoose.disconnect();
+    console.log("Done creating users!");
+}
+
+creatUser().catch(err => console.log("Error creating users: ", err))
