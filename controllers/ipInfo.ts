@@ -29,7 +29,7 @@ export const getIp = async (
         return res.status(400).json({error: "Wrong IP, please input a valid IP"})
     }
 
-    const existIpInfo = await ipInfo.findOne({ip: result.ip})
+    const existIpInfo = await ipInfo.findOne({ip: result.ip, user: req.user._id})
     if(!existIpInfo) {
         const newIpInfo = new ipInfo({ ...result, user: req.user._id })
         newIpInfo.save();

@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": " nodemon app.ts "
+    "build": "rimraf dist && tsc",
+    "prestart": "npm run build",
+    "start": "node dist/app.js",
+    "preserve": "npm run build",
+    "serve": "concurrently \"tsc -w\" \"nodemon --delay .1s dist/app.js\""
   },
   "keywords": [],
   "author": "",
@@ -12,6 +16,7 @@
   "dependencies": {
     "axios": "^1.7.3",
     "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
